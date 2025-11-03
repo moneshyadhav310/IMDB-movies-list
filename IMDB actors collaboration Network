@@ -1,0 +1,75 @@
+mport java.util.*;
+
+public class DuplicateNumberCheck {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+
+        int[] arr = new int[n];
+        for(int i=0; i<n; i++) {
+            arr[i] = sc.nextInt();
+        }
+
+        try {
+            int sum = checkDuplicatesAndSum(arr);
+            System.out.println("Sum of the Elements are " + sum);
+        } catch (DuplicateNumberException e) {
+            System.out.println(e.getMessage());
+        }
+
+        sc.close();
+    }
+
+    public static int checkDuplicatesAndSum(int[] arr) throws DuplicateNumberException {
+        Map<Integer, Integer> freq = new HashMap<>();
+        for(int num : arr) {
+            freq.put(num, freq.getOrDefault(num, 0) + 1);
+        }
+
+        List<Integer> duplicates = new ArrayList<>();
+        for(Map.Entry<Integer, Integer> entry : freq.entrySet()) {
+            if(entry.getValue() > 1) {
+                duplicates.add(entry.getKey());
+            }
+        }
+
+        if(!duplicates.isEmpty()) {
+            Collections.sort(duplicates);
+            throw new DuplicateNumberException(formatDuplicateMessage(duplicates));
+        }
+
+        int sum = 0;
+        for(int num : arr) {
+            sum += num;
+        }
+        return sum;
+    }
+
+    public static String formatDuplicateMessage(List<Integer> duplicates) {
+        StringBuilder sb = new StringBuilder("Duplicate Number Exception: Number ");
+
+        if (duplicates.size() == 1) {
+            sb.append(duplicates.get(0)).append(" is Duplicate");
+        } else {
+            for (int i = 0; i < duplicates.size(); i++) {
+                if (i > 0) {
+                    if (i == duplicates.size() - 1) {
+                        sb.append(" and ");
+                    } else {
+                        sb.append(",");
+                    }
+                }
+                sb.append(duplicates.get(i));
+            }
+            sb.append(" are Duplicates");
+        }
+        return sb.toString();
+    }
+}
+
+class DuplicateNumberException extends Exception {
+    public DuplicateNumberException(String message) {
+        super(message);
+    }
+}
